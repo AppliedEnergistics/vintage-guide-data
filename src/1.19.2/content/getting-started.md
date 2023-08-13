@@ -99,7 +99,7 @@ First, ME Stores items inside of other items, called Storage Cells; there are 4 
 storage. In order to use a Storage Cell it must be placed inside either an <ItemLink id="chest"/>,
 or an <ItemLink id="drive"/>.
 
-<CategoryIndex category="Storage Cells" />
+<CategoryIndex category="Storage Cells/Storage Cells" />
 
 The <ItemLink id="chest"/> shows you the contents of the Cell as soon as its placed inside, and you
 can add and remove items from it as if it were a <ItemLink id="minecraft:chest"/>, with the exception that the items are
