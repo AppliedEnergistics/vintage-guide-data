@@ -42,13 +42,6 @@ jobs:
           name: guides
           path: out
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          aws-region: auto
-
       - name: Synchronize Versions
         run: |
           for version in minecraft-*; do
@@ -57,5 +50,8 @@ jobs:
           done
         working-directory: out
         env:
-          $AWS_S3_BUCKET: 'guide-assets'
+          AWS_S3_BUCKET: 'guide-assets'
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_REGION: auto
           AWS_ENDPOINT_URL_S3: 'https://02aa146d8ef70ae7f9548b98cbb63161.r2.cloudflarestorage.com'
