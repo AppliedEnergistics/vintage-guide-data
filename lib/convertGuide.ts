@@ -15,6 +15,7 @@ import convertRecipes from "./convertRecipes.js";
 function writeGuide(srcDir: string, destDir: string, gameData: any) {
   const index: GuideIndex = {
     defaultNamespace: "ae2",
+    startPageId: "ae2:getting-started.md",
     navigationRootNodes: [],
     coloredVersions: {},
     fluids: {},
