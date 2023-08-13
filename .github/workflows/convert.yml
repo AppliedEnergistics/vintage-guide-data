@@ -1,0 +1,60 @@
+name: Convert Vintage Guides
+
+on:
+  # Allow running it manually against any ref
+  workflow_dispatch: {}
+  # Run on all push events
+  push: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install NPM Dependencies
+        run: npm ci
+      - name: Convert Guides
+        run: npm run convert
+      - name: Optimize PNGs
+        run: |
+          mkdir oxipng
+          curl -Ls https://github.com/shssoichiro/oxipng/releases/download/v8.0.0/oxipng-8.0.0-x86_64-unknown-linux-musl.tar.gz | tar --strip-components=1 -zx -C oxipng
+          find out -name "*.png" -exec oxipng/oxipng --strip safe {} \;
+      - uses: actions/upload-artifact@v3
+        with:
+          name: guide
+          path: build/guide/
+
+  # This job publishes the release version of guides to S3
+  publish-web-release:
+    needs: build
+    name: Publish to Web
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: guide
+          path: out
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws-region: auto
+
+      - name: Synchronize Versions
+        run: |
+          for version in minecraft-*; do
+            echo "Synchronizing $version"
+            aws s3 sync $version s3://$AWS_S3_BUCKET/$version --acl public-read --follow-symlinks --delete 
+          done
+        working-directory: out
+        env:
+          $AWS_S3_BUCKET: 'guide-assets'
+          AWS_ENDPOINT_URL_S3: 'https://02aa146d8ef70ae7f9548b98cbb63161.r2.cloudflarestorage.com'

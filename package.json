@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/mdast": "^4.0.0",
+    "@types/node": "^20.4.10",
+    "@types/node-zopfli": "^2.0.2",
+    "base-x": "^4.0.0",
+    "glob": "^10.3.3",
+    "mdast-util-from-markdown": "^2.0.0",
+    "mdast-util-frontmatter": "^2.0.0",
+    "mdast-util-gfm": "^3.0.0",
+    "mdast-util-mdx": "^3.0.0",
+    "micromark-extension-frontmatter": "^2.0.0",
+    "micromark-extension-gfm": "^3.0.0",
+    "micromark-extension-mdx": "^2.0.0",
+    "node-zopfli": "^2.1.4",
+    "prettier": "^3.0.1",
+    "serve": "^14.2.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.1",
+    "typescript": "^5.1.6",
+    "unist-util-visit": "^5.0.0",
+    "yaml": "^2.3.1"
+  },
+  "scripts": {
+    "serve": "serve -n -C out",
+    "convert": "node --loader ts-node/esm convert_all.ts"
+  }
+}
