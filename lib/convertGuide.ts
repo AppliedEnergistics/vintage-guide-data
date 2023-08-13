@@ -11,6 +11,7 @@ import { buildPageTree } from "./buildPageTree.js";
 import convertCategoryIndex from "./convertCategoryIndex.js";
 import convertItemIndex from "./convertItemIndex.js";
 import convertRecipes from "./convertRecipes.js";
+import convertColoredVersions from "./convertColoredVersions.js";
 
 function writeGuide(srcDir: string, destDir: string, gameData: any) {
   const index: GuideIndex = {
@@ -37,6 +38,7 @@ function writeGuide(srcDir: string, destDir: string, gameData: any) {
   convertCategoryIndex(pages, index);
   convertItemIndex(pages, index);
   convertRecipes(gameData, index);
+  convertColoredVersions(gameData, index);
 
   const indexJson = JSON.stringify(index, null, 2);
   const indexBuffer = Buffer.from(indexJson, "utf-8");
