@@ -27,8 +27,8 @@ jobs:
           find out -name "*.png" -exec oxipng/oxipng --strip safe {} \;
       - uses: actions/upload-artifact@v3
         with:
-          name: guide
-          path: build/guide/
+          name: guides
+          path: out
 
   # This job publishes the release version of guides to S3
   publish-web-release:
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: guide
+          name: guides
           path: out
 
       - name: Configure AWS Credentials
