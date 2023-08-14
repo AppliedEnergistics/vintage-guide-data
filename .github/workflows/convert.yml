@@ -20,10 +20,12 @@ jobs:
         run: npm ci
       - name: Convert Guides
         run: npm run convert
+      - name: Compress artifact
+        run: tar cfz out.tar.gz out
       - uses: actions/upload-artifact@v3
         with:
           name: guides
-          path: out
+          path: out.tar.gz
 
   # This job publishes the release version of guides to S3
   publish-web-release:
@@ -35,8 +37,8 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: guides
-          path: out
-
+      - name: Extract artifact
+        run: tar xf out.tar.gz
       - name: Synchronize Versions
         run: |
           for version in minecraft-*; do
