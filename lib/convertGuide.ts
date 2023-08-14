@@ -12,11 +12,28 @@ import convertCategoryIndex from "./convertCategoryIndex.js";
 import convertItemIndex from "./convertItemIndex.js";
 import convertRecipes from "./convertRecipes.js";
 import convertColoredVersions from "./convertColoredVersions.js";
+import semver from "semver";
 
 function writeGuide(srcDir: string, destDir: string, gameData: any) {
+  let defaultNamespace;
+  const gameVersion = semver.coerce(gameData.gameVersion);
+  if (!gameVersion) {
+    throw new Error("Failed to coerce game version: " + gameData.gameVersion);
+  }
+  if (semver.lt(gameVersion, "1.18.0")) {
+    defaultNamespace = "appliedenergistics2";
+  } else {
+    defaultNamespace = "ae2";
+  }
+  console.info(
+    "Game version: %s. Default Namespace: %s",
+    gameVersion,
+    defaultNamespace,
+  );
+
   const index: GuideIndex = {
-    defaultNamespace: "ae2",
-    startPageId: "ae2:getting-started.md",
+    defaultNamespace,
+    startPageId: `${defaultNamespace}:getting-started.md`,
     navigationRootNodes: [],
     coloredVersions: {},
     fluids: {},
@@ -27,13 +44,13 @@ function writeGuide(srcDir: string, destDir: string, gameData: any) {
     items: {},
   };
 
-  const pages = loadPages(srcDir);
+  const pages = loadPages(index, srcDir);
   console.info("Loaded %d pages", Object.keys(pages).length);
 
   const pageTree = buildPageTree(Object.values(pages));
 
   convertItems(gameData, index);
-  convertNavigation(srcDir, gameData, index, pages);
+  convertNavigation(srcDir, index, pages);
   convertPages(pageTree, pages, index);
   convertCategoryIndex(pages, index);
   convertItemIndex(pages, index);

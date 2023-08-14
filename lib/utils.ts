@@ -2,9 +2,10 @@ import { createHash } from "crypto";
 import baseX from "base-x";
 import path from "path";
 import { writeFileSync } from "fs";
+import { GuideIndex } from "./targetTypes.js";
 
-export function pagePathToId(path: string) {
-  return qualifyId(path.replaceAll("\\", "/"));
+export function pagePathToId(index: GuideIndex, path: string) {
+  return qualifyId(index, path.replaceAll("\\", "/"));
 }
 
 const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -30,11 +31,14 @@ export function writeCacheBusted(targetPath: string, buffer: Buffer) {
 }
 
 // Old guides used ae2: as the default namespace
-export function qualifyId(id: string): string;
-export function qualifyId(id: undefined): undefined;
-export function qualifyId(id: string | undefined): string | undefined {
+export function qualifyId(index: GuideIndex, id: string): string;
+export function qualifyId(index: GuideIndex, id: undefined): undefined;
+export function qualifyId(
+  index: GuideIndex,
+  id: string | undefined,
+): string | undefined {
   if (id && !id.includes(":")) {
-    return "ae2:" + id;
+    return index.defaultNamespace + ":" + id;
   } else {
     return id;
   }

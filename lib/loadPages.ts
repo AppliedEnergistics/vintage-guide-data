@@ -11,6 +11,7 @@ import path from "path";
 import { frontmatter } from "micromark-extension-frontmatter";
 import YAML from "yaml";
 import { pagePathToId, qualifyId } from "./utils.js";
+import { GuideIndex } from "./targetTypes.js";
 
 export type LoadedPage = {
   /**
@@ -45,7 +46,11 @@ function extractFrontmatter(root: Root) {
   return frontmatterDict;
 }
 
-function loadPage(pagePath: string, pageContent: string): LoadedPage {
+function loadPage(
+  guideIndex: GuideIndex,
+  pagePath: string,
+  pageContent: string,
+): LoadedPage {
   const root = fromMarkdown(pageContent, {
     extensions: [frontmatter(["yaml"]), gfm(), mdx()],
     mdastExtensions: [
@@ -69,13 +74,13 @@ function loadPage(pagePath: string, pageContent: string): LoadedPage {
   delete frontmatterDict["title"];
   delete frontmatterDict["categories"];
   itemIds ??= [];
-  itemIds = itemIds.map(qualifyId);
+  itemIds = itemIds.map((itemId: string) => qualifyId(guideIndex, itemId));
   categories ??= [];
   sidenavIcon ??= itemIds[0];
-  sidenavIcon = qualifyId(sidenavIcon);
+  sidenavIcon = qualifyId(guideIndex, sidenavIcon);
 
   return {
-    id: pagePathToId(pagePath),
+    id: pagePathToId(guideIndex, pagePath),
     path: pagePath,
     frontmatter: frontmatterDict,
     root,
@@ -87,12 +92,15 @@ function loadPage(pagePath: string, pageContent: string): LoadedPage {
   };
 }
 
-export default function loadPages(srcDir: string): Record<string, LoadedPage> {
+export default function loadPages(
+  guideIndex: GuideIndex,
+  srcDir: string,
+): Record<string, LoadedPage> {
   const pages: Record<string, LoadedPage> = {};
   const contentRoot = path.join(srcDir, "content");
   for (const pagePath of globSync("**/*.md", { cwd: contentRoot })) {
     const pageContent = readFileSync(path.join(contentRoot, pagePath), "utf-8");
-    const page = loadPage(pagePath, pageContent);
+    const page = loadPage(guideIndex, pagePath, pageContent);
     pages[page.id] = page;
   }
   return pages;

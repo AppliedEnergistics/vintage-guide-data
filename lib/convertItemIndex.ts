@@ -10,7 +10,7 @@ export default function convertItemIndex(
 
   for (const page of Object.values(pages)) {
     for (let itemId of page.itemIds) {
-      itemId = qualifyId(itemId);
+      itemId = qualifyId(index, itemId);
 
       const existingPageId = itemIdToPage.get(itemId);
       if (existingPageId) {

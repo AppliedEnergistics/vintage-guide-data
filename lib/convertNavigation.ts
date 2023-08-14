@@ -15,11 +15,12 @@ interface MenuEntry {
 }
 
 function convertMenuEntryToNavigationNode(
+  index: GuideIndex,
   entry: string | PageLink,
   pages: Record<string, LoadedPage>,
 ): NavigationNode {
   const pagePath = typeof entry === "string" ? entry : entry.path;
-  const pageId = pagePathToId(pagePath);
+  const pageId = pagePathToId(index, pagePath);
   const page = pages[pageId];
   if (!page) {
     throw new Error("Menu contains unknown page: " + pagePath);
@@ -38,7 +39,6 @@ function convertMenuEntryToNavigationNode(
 
 export default function convertNavigation(
   srcDir: string,
-  gameData: any,
   guideIndex: GuideIndex,
   pages: Record<string, LoadedPage>,
 ) {
@@ -55,7 +55,7 @@ export default function convertNavigation(
       icon: undefined,
       position: 0,
       children: menuEntry.children.map((entry) =>
-        convertMenuEntryToNavigationNode(entry, pages),
+        convertMenuEntryToNavigationNode(guideIndex, entry, pages),
       ),
     });
   }
